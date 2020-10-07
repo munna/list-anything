@@ -1,0 +1,111 @@
+@import url("https://fonts.googleapis.com/css?family=Pacifico");
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background: white;
+  font-family: monospace;
+  font-size: 18px;
+  text-align: center;
+}
+
+.logo {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-family: "Pacifico", cursive;
+  font-size: 5rem;
+  background: linear-gradient(
+    to right,
+    #ef5350,
+    #f48fb1,
+    #7e57c2,
+    #2196f3,
+    #26c6da,
+    #43a047,
+    #eeff41,
+    #f9a825,
+    #ff5722
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container {
+  height: 320px;
+  width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pixel {
+  content: " ";
+  width: 16px;
+  height: 16px;
+  outline: 1px solid lightgrey;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.palette {
+  height: 32px;
+  outline: 1px solid white;
+  display: flex;
+}
+
+.palette-color {
+  content: " ";
+  width: 32px;
+  height: 32px;
+  outline: 1px solid white;
+  cursor: pointer;
+}
+
+.business-list {
+  display: flex;
+}
+.business-list li{
+  width: 33%;
+  height: 300px;
+  display:inline-block;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin:5px;
+  vertical-align: top;
+  position: relative;
+  background-color: #f9a825;
+}
+.business-list li img {
+  width: 100%;
+}
+.business-list li .content {
+  position: absolute;
+  background-color: #7e57c2;
+  color: #fff;
+  padding:10px 0px;
+  width: 100%;
+  display: block;
+  bottom: 0px;
+  left: 0px;
+  display:none;
+  overflow: hidden;
+}
+
+.business-list li:hover .content {
+  display:block;
+}
+
+.business-form input[type="text"] {
+width: 100%;
+height: 25px;
+}
