@@ -9,6 +9,22 @@ query BusinessDetails {
     description
     contact_owner
     category
+    url
+    business_images {
+         image_url
+    }
+  }
+}
+`;
+
+export const GET_BUSINESS_BY_URL = gql`
+query BusinessDetails($url: String!) {
+  business(where: {url: {_eq: $url}}) {
+    email
+    title
+    description
+    contact_owner
+    category
     business_images {
          image_url
     }
@@ -26,8 +42,9 @@ mutation SaveBusiness($address: String,
   $email: String,
   $lat: String,
   $lng: String,
-  $mobile_no: String) {
-  insert_business(objects: {address: $address, category: $category, contact_owner: $contact_owner, created_at: $created_at, description: $description, email: $email, lat: $lat, lng: $lng, mobile_no: $mobile_no, title: $title}) {
+  $mobile_no: String,
+  $url: String) {
+  insert_business(objects: {address: $address, category: $category, contact_owner: $contact_owner, created_at: $created_at, description: $description, email: $email, lat: $lat, lng: $lng, mobile_no: $mobile_no, title: $title,url: $url}) {
     affected_rows
     returning {
         id

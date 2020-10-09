@@ -6,7 +6,7 @@ import {Grid, Card, CardContent, CardActionArea,
 const useStyles = makeStyles({
 });
 
-const Business = ({ business, history }) => {
+const Details = ({ business }) => {
   const classes = useStyles();
 //   const [pixelColor, changeColor] = useState(color);
 const { business_images } = business;
@@ -15,9 +15,9 @@ if(business_images !== undefined && business_images.length>0) {
   imgUrl = business_images[0].image_url;
 }
   return (
-    <Grid item xs={12} sm={6} md={3} lg={3}>
+    <Grid item xs={12} sm={12} md={12} lg={12}>
       <Card className={classes.root}>
-      <CardActionArea onClick={()=>{history.push(`/business/show/${business.url}`)}}>
+      <CardActionArea>
         <CardMedia
           component="img"
           alt={business.title}
@@ -34,17 +34,9 @@ if(business_images !== undefined && business_images.length>0) {
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActions>
-        <Button size="small" color="primary">
-          Share
-        </Button>
-        <Button size="small" color="primary">
-          Learn More
-        </Button>
-      </CardActions>
     </Card>
         </Grid>
   );
 };
 
-export default Business;
+export default Details;

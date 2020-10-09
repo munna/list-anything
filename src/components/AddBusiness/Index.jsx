@@ -8,6 +8,7 @@ import { AddCircleOutline, Email } from '@material-ui/icons';
 import {DropzoneArea} from 'material-ui-dropzone'
 import { makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
+import randomstring from 'randomstring';
 
 import request from 'superagent';
 import { SAVE_BUSINESS, SAVE_BUSINESS_IMAGES } from '../../constants/graphql/business';
@@ -41,6 +42,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddBusiness = ({ business }) => {
+  
+  const [open, setOpen] = React.useState(false);
+  const [successMessage, setSuccessMessage] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState(false);
+  const [addressLocation, setAddresLocation] = React.useState({});
+
   const classes = useStyles();
   const addressField = useRef(null);
   const formRef = useRef(null);
@@ -48,9 +55,13 @@ const AddBusiness = ({ business }) => {
   useEffect(()=>{
     loadModules(['esri/widgets/Search'], { css: true })
       .then(([Search]) => {
-        const search = new Search({
+        if(search !== null) { 
+          search.destroy();
+        }
+        search = new Search({
           container: 'dvspotsearch',
         });
+      
         // this.search = search;
         search.on('select-result', (event) => {
           const selectedLocation = event.result.feature;
@@ -60,18 +71,15 @@ const AddBusiness = ({ business }) => {
           // stories[currentNo].latitude = latitude;
           // stories[currentNo].longitude = longitude;
           setAddresLocation({address: Match_addr, latitude, longitude});
-          // addressField.current.value = Match_addr;
           
         });
         // setOpen(false);
+        clearForm();
       });
-  },[])
+  },[open, successMessage])
 
 
-  const [open, setOpen] = React.useState(true);
-  const [successMessage, setSuccessMessage] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState(false);
-  const [addressLocation, setAddresLocation] = React.useState({});
+  
   const [saveBusiness, { data,loading: savingBusiness }] = useMutation(SAVE_BUSINESS);
   const [saveBusinessImages, { data: imagesData,loading: savingImages }] = useMutation(SAVE_BUSINESS_IMAGES);
   const [files, setFiles] = React.useState([]);
@@ -116,7 +124,11 @@ const AddBusiness = ({ business }) => {
           jsonData.objects.push({business_id:business_id,image_url: value})
         });
         saveBusinessImages({variables:jsonData}).then(d=>{
-          alert("Added Images to database");
+          setSuccessMessage(true);
+          clearForm();
+        }).catch(err=>{
+          setSuccessMessage(true);
+          clearForm();
         });
       }); 
     }
@@ -146,24 +158,30 @@ const AddBusiness = ({ business }) => {
           "created_at": (new Date()).toUTCString(),
           "category": category,
           "email": email,
-          "mobile_no": mobile_no.toString()
+          "mobile_no": mobile_no.toString(),
+          "url": randomstring.generate(10)
         }
       }).then(d=>{
         const data = d.data;
         if(data.insert_business.affected_rows>0) {
-          alert('added successfully');
           const returning = d.data.insert_business.returning[0];
           const { id } = returning;
-          uploadFiles(id,files);
+          if(files.length > 0 ){
+            uploadFiles(id,files);
+          } else {
+            setSuccessMessage(true);
+            clearForm();
+          }
         }
-        console.log(d);
       }).catch(err=>{
         console.log(err);
       });
 
     }
   }
-  const clearForm = (event) => {
+  const clearForm = () => {
+    if(formRef == null || formRef.current === null) 
+      return;
     Array.prototype.forEach.call(formRef.current.elements, function(element) {
       if(element.name === undefined || element.name === '')
         return;
@@ -171,7 +189,7 @@ const AddBusiness = ({ business }) => {
     });
   }
   const validateForm = () => {
-    const requiredFields = ["title","description"];
+    const requiredFields = ["title","description","address","contact_owner","mobile_no"];
     const erroritems = {};
     const formData ={}
     requiredFields.forEach(item=>{
@@ -195,6 +213,11 @@ const AddBusiness = ({ business }) => {
   const handleSnackBarClose = ()=>{
     setSuccessMessage(false);
   }
+  const handleAddressChange=(e)=>{
+    const addressData = Object.assign({},addressLocation);
+    addressData.address = e.target.value;
+    setAddresLocation(addressData);
+  }
     
   const body = (
     <div>
@@ -214,20 +237,20 @@ const AddBusiness = ({ business }) => {
           <TextField name="category" label="In which category your business belongs?" fullWidth variant="standard" inputMode="text" required></TextField>
         </div>
         <div className={classes.margin}>         
-          <TextField name="address" label="Where is located this business?" ref={addressField} fullWidth variant="standard" inputMode="text" required></TextField>
+          <TextField name="address" label="Where is located this business?" ref={addressField} onChange={(e)=>{handleAddressChange(e)}} value={addressLocation.address} fullWidth variant="standard" inputMode="text" required></TextField>
         </div>
         <div className={classes.margin}>
         <TextField name="description"  label="Descibe your business with few words" error={error.description} multiline rowsMax="4" fullWidth variant="standard" inputMode="text" required> </TextField>
         </div>
         
         <div className={classes.margin}>
-          <TextField name="contact_owner" label="Proivde name of contact person" fullWidth variant="standard" inputMode="text"></TextField>
+          <TextField name="contact_owner" label="Proivde name of contact person" error={error.contact_owner} fullWidth variant="standard" inputMode="text"></TextField>
         </div>
         <div className={classes.margin}>
-          <TextField name="email" label="Provide email address" fullWidth variant="standard" inputMode="email"></TextField>
+          <TextField name="email" label="Provide email address"  error={error.email} fullWidth variant="standard" inputMode="email"></TextField>
         </div>
         <div className={classes.margin}>
-          <TextField name="mobile_no" label="Contact person mobile number" fullWidth variant="standard" inputMode="numeric"></TextField>
+          <TextField name="mobile_no" label="Contact person mobile number" error={error.mobile_no} fullWidth variant="standard" inputMode="numeric"></TextField>
         </div>
         <div  className={classes.margin} style={{maxWidth:'450px'}}>
         <DropzoneArea style={{height:'100px'}}
@@ -239,7 +262,7 @@ const AddBusiness = ({ business }) => {
           <Button className={classes.margin} disabled={savingBusiness} size="large" color="primary" variant="contained" type="submit" >Save</Button>
           {(savingBusiness || savingImages) && <CircularProgress size={24} className={classes.buttonProgress} />}
           <Button className={classes.margin}  variant="contained" size="large" type="button" onClick={clearForm}>Clear</Button>
-          <Snackbar open={!successMessage} autoHideDuration={6000} onClose={handleSnackBarClose}>
+          <Snackbar open={successMessage} autoHideDuration={6000} onClose={handleSnackBarClose}>
           <Alert onClose={handleSnackBarClose} severity="success">
             <strong>Congratulations!</strong> Created profile successfully.
           </Alert>
@@ -251,7 +274,7 @@ const AddBusiness = ({ business }) => {
 
       return (
         <>
-        <Fab color="secondary" style={{position:'fixed',top:'20px',right:'0px'}} variant="extended" onClick={toggleDrawer} aria-label="add">
+        <Fab color="secondary" style={{position:'fixed',bottom:'20px',right:'0px'}} variant="extended" onClick={toggleDrawer} aria-label="add">
   <AddCircleOutline className={classes.extendedIcon} />
   Add New Business
 </Fab>
