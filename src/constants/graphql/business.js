@@ -25,6 +25,8 @@ query BusinessDetails($url: String!) {
     description
     contact_owner
     category
+    email
+    mobile_no
     business_images {
          image_url
     }

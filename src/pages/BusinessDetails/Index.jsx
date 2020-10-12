@@ -48,7 +48,7 @@ const BusinessDetails = () => {
     }
     const { business } = data;
     return (
-      <div className="content">
+      
         <Grid container spacing={3}>
             
           {
@@ -57,7 +57,6 @@ const BusinessDetails = () => {
             })
           }
         </Grid>
-      </div>
     );
 }
 export default BusinessDetails;

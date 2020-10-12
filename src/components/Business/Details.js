@@ -1,9 +1,27 @@
 import React, { useState } from "react";
 import Paper from '@material-ui/core/Paper';
 import {Grid, Card, CardContent, CardActionArea,
-   CardMedia,CardActions, Button, Typography, makeStyles} from '@material-ui/core';
+   CardMedia,CardActions, Button, Typography, Container, makeStyles} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@material-ui/core';
+import { Twitter, Facebook, LinkedIn, GitHub, Instagram } from '@material-ui/icons';
+
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 const useStyles = makeStyles({
+  business_area:{
+    backgroundColor:'#fff',
+    width:'100%',
+    height:'90vh',
+    overflowY:'hidden',
+  },
+  title: {
+    fontSize:'30px',
+    fontWeight:'bold'
+  },
+  table:{
+    width:'98%'
+  }
 });
 
 const Details = ({ business }) => {
@@ -15,27 +33,84 @@ if(business_images !== undefined && business_images.length>0) {
   imgUrl = business_images[0].image_url;
 }
   return (
-    <Grid item xs={12} sm={12} md={12} lg={12}>
-      <Card className={classes.root}>
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          alt={business.title}
-          height="200"
-          image={imgUrl}
-          title={business.title}
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            {business.title}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {business.description}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-        </Grid>
+    
+    <Container maxWidth="xl" style={{marginTop:'20px'}}>
+      <Grid container spacing={0}>
+
+      <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+        <Paper className={classes.business_area} elevation={3} >
+        <TableContainer component={Paper}>
+      <Table className={classes.table} size="small" aria-label="a dense table">
+        <TableBody>
+        <TableRow>
+            <TableCell colSpan={2} component="h1" className={classes.title} variant="h1">
+              {business.title}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={2} component="th" scope="row">
+              Contact Details
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell component="th" scope="row">
+              Name
+            </TableCell>
+            <TableCell>
+              {business.contact_owner}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell component="th" scope="row">
+              Mobile No
+            </TableCell>
+            <TableCell>
+              {business.mobile_no}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell component="th" scope="row">
+              Email
+            </TableCell>
+            <TableCell>
+              {business.email}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+          <TableCell component="th" scope="row">
+              Social
+            </TableCell>
+            <TableCell >
+              <Twitter color="primary"  fontSize="large" />
+              <Facebook color="primary"  fontSize="large" />
+              <LinkedIn  fontSize="large" />
+              <Instagram  fontSize="large" />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+          </Paper>
+      </Grid>
+      <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
+        <Carousel showThumbs={false} dynamicHeight={false}>
+          {business_images.map(item=>{
+            return <div style={{height:'350px'}}>
+                <img src={item.image_url} alt="business.title" />
+                  <p className="legend">{business.title}</p>
+            </div>
+          })}
+          </Carousel>
+          <Grid container>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <Typography component="div">{business.description}</Typography>
+
+            </Grid>
+          </Grid>
+      </Grid>
+      </Grid>
+    
+    </Container>
   );
 };
 
