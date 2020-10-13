@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { fade, makeStyles } from '@material-ui/core/styles';
+import { useAuth0 } from "@auth0/auth0-react";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -68,7 +69,13 @@ const useStyles = makeStyles((theme) => ({
 const TopNavigation =()=>{
     const classes = useStyles();
     const { push } = useHistory();
-
+    
+    const LoginButton = () => {
+      const { loginWithRedirect } = useAuth0();
+    
+      return <Button color="inherit" onClick={() => loginWithRedirect()}>Log In</Button>;
+    };
+    
     return (<AppBar position="static" color="secondary">
     <Toolbar>
       <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
@@ -94,7 +101,7 @@ const TopNavigation =()=>{
               inputProps={{ 'aria-label': 'search' }}
             />
         </div>
-      <Button color="inherit">Login</Button>
+      <LoginButton />
  
     </Toolbar>
   </AppBar>)

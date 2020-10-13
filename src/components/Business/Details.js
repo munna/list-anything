@@ -17,7 +17,9 @@ const useStyles = makeStyles({
   },
   title: {
     fontSize:'30px',
-    fontWeight:'bold'
+    fontWeight:'bold',
+    textAlign: 'left',
+    padding: '0px 10px'
   },
   table:{
     width:'98%'
@@ -43,13 +45,13 @@ if(business_images !== undefined && business_images.length>0) {
       <Table className={classes.table} size="small" aria-label="a dense table">
         <TableBody>
         <TableRow>
-            <TableCell colSpan={2} component="h1" className={classes.title} variant="h1">
+            <TableCell colSpan={2} component="h2"  variant="h2">
               {business.title}
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell colSpan={2} component="th" scope="row">
-              Contact Details
+              Contact Information
             </TableCell>
           </TableRow>
           <TableRow>
@@ -103,6 +105,7 @@ if(business_images !== undefined && business_images.length>0) {
           </Carousel>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <Typography component="h1" className={classes.title}>{business.title}</Typography>
             <Typography component="div">{business.description}</Typography>
 
             </Grid>
