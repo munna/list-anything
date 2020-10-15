@@ -3,6 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { useAuth0 } from "@auth0/auth0-react";
 import AppBar from '@material-ui/core/AppBar';
+import Menu from '@material-ui/core/Menu';
+import Avatar from '@material-ui/core/Avatar';
+import MenuItem from '@material-ui/core/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -10,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,11 +73,44 @@ const useStyles = makeStyles((theme) => ({
 const TopNavigation =()=>{
     const classes = useStyles();
     const { push } = useHistory();
-    
+    const { user, isAuthenticated, isLoading } = useAuth0();
+    console.log(isAuthenticated);
+    console.log(user);
+    console.log(isLoading);
     const LoginButton = () => {
-      const { loginWithRedirect } = useAuth0();
+      const { loginWithPopup } = useAuth0();
     
-      return <Button color="inherit" onClick={() => loginWithRedirect()}>Log In</Button>;
+      return <Button color="inherit" onClick={() => loginWithPopup()}>Log In</Button>;
+    };
+    const LogoutButton = () => {
+      const { user, logout } = useAuth0();
+      const [anchorEl, setAnchorEl] = React.useState(null);
+      const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+      return (
+        <>
+        <Button color="inherit" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+        <Avatar alt={user.nickname} src={user.picture} />
+ {user.nickname} <ArrowDropDown />
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={()=> logout({ returnTo: window.location.origin })}>Logout</MenuItem>
+        </Menu>
+        </>
+      );
     };
     
     return (<AppBar position="static" color="secondary">
@@ -101,7 +138,13 @@ const TopNavigation =()=>{
               inputProps={{ 'aria-label': 'search' }}
             />
         </div>
+        {isAuthenticated && 
+        <LogoutButton />
+        }
+        {!isAuthenticated && 
       <LoginButton />
+        }
+
  
     </Toolbar>
   </AppBar>)

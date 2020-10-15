@@ -8,20 +8,26 @@ import {
 import BusinessList from "./pages/BusinessList/Index";
 import BusinessDetails from "./pages/BusinessDetails/Index";
 import TopNavigation from './components/HOC/TopNavigation';
-import SignInSide from './pages/Account/SignInSide';
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 function App() {
+  const { isAuthenticated,loginWithRedirect } = useAuth0();
+  // const SecretRoute = ({ component: Component, ...rest }) => (
+  //   <Route {...rest} render={(props) => (
+  //     isAuthenticated === true
+  //       ? <Component {...props} />
+  //       : loginWithRedirect()
+  //   )} />
+  // );
   return (
     <Router >
         <TopNavigation />
         <Switch>
           
-        <Route path="/business/show/:url" >
+        <Route withAuthenticationRequired path="/business/show/:url" >
             <BusinessDetails />
-          </Route>
-          <Route path="/login" >
-            <SignInSide />
-          </Route>
+          </SecretRoute>
           <Route path="/" render={(props) => <BusinessList {...props} />} >
             
           </Route>

@@ -13,7 +13,7 @@ import connection from "./Connection";
 ReactDOM.render(
 <ApolloProvider client={connection}>
     <Auth0Provider domain="apexpath.us.auth0.com"
-    clientId="k2Wtr7aJPMDUWojgFU3s4GZ1ycwdYUls"
+    clientId="qO3ZgSHww1Se0rCC2De3TDbtdZ4p2AK5"
     redirectUri={window.location.origin}>
         <App />
     </Auth0Provider>
